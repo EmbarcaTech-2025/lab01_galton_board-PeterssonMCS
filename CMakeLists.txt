@@ -15,9 +15,9 @@ if(WIN32)
 else()
     set(USERHOME $ENV{HOME})
 endif()
-set(sdkVersion 1.5.1)
-set(toolchainVersion 13_2_Rel1)
-set(picotoolVersion 2.0.0)
+set(sdkVersion 2.1.1)
+set(toolchainVersion 14_2_Rel1)
+set(picotoolVersion 2.1.1)
 set(picoVscode ${USERHOME}/.pico-sdk/cmake/pico-vscode.cmake)
 if (EXISTS ${picoVscode})
     include(${picoVscode})
@@ -28,40 +28,46 @@ set(PICO_BOARD pico_w CACHE STRING "Board type")
 # Pull in Raspberry Pi Pico SDK (must be before project)
 include(pico_sdk_import.cmake)
 
-project(lab-01-galton-board C CXX ASM)
+project(main C CXX ASM)
 
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(lab-01-galton-board
-  ./src/lab-01-galton-board.c 
-  ./include/ssd1306_i2c.c
-)
+add_executable( main 
+                main.c 
+                hal/display/font.c
+                hal/display/driver1306.c
+                hal/hardware/gpio/gpio.c
+                hal/hardware/timer/timer.c
+                hal/hardware/i2c/i2c.c
+                pOS.c
+                hal_def.c
+                application/ball.c
+                application/linked_list.c
+                application/my_rand.c
+                application/obstacles.c)
 
-pico_set_program_name(lab-01-galton-board "lab-01-galton-board")
-pico_set_program_version(lab-01-galton-board "0.1")
+pico_set_program_name(main "main")
+pico_set_program_version(main "0.1")
 
 # Modify the below lines to enable/disable output over UART/USB
-pico_enable_stdio_uart(lab-01-galton-board 0)
-pico_enable_stdio_usb(lab-01-galton-board 1)
+pico_enable_stdio_uart(main 0)
+pico_enable_stdio_usb(main 1)
 
 # Add the standard library to the build
-target_link_libraries(lab-01-galton-board
+target_link_libraries(main
         pico_stdlib)
 
 # Add the standard include files to the build
-target_include_directories(lab-01-galton-board PRIVATE
+target_include_directories(main PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}
-        ./include
 )
 
 # Add any user requested libraries
-target_link_libraries(lab-01-galton-board 
-        hardware_i2c
-        
-        )
+target_link_libraries(  main
+                        hardware_i2c)
 
-pico_add_extra_outputs(lab-01-galton-board)
+pico_add_extra_outputs(main)
 
