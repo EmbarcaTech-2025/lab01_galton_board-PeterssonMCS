@@ -47,7 +47,8 @@ add_executable( main
                 application/ball.c
                 application/linked_list.c
                 application/my_rand.c
-                application/obstacles.c)
+                application/obstacles.c
+                application/bins.c)
 
 pico_set_program_name(main "main")
 pico_set_program_version(main "0.1")

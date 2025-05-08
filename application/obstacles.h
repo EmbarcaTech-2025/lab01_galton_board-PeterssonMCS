@@ -1,8 +1,23 @@
 #ifndef _OBSTACLES_H_
 #define _OBSTACLES_H_
 
-int** OBSTACLES_Init( int rows , int center , int width , int height , int* size );
 
-void OBSTACLES_Draw( int** obstacles , int size );
+typedef struct
+{
+    int x;
+    int y;
+}OBSTACLES_t;
+
+typedef struct
+{
+    int rows;
+    int center;
+    int width;
+    int height;
+}OBSTACLES_CONFIG_t;
+
+OBSTACLES_t** OBSTACLES_Init( OBSTACLES_CONFIG_t , int* );
+
+void OBSTACLES_Draw( OBSTACLES_t** , int );
 
 #endif

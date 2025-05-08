@@ -1,29 +1,29 @@
 #include "obstacles.h"
 #include "hal_def.h"
 
-int** OBSTACLES_Init( int rows , int center , int width , int height , int* size )
+OBSTACLES_t** OBSTACLES_Init( OBSTACLES_CONFIG_t cfg , int* size )
 {
     int index = 0;
     *size = 0;
-    int** obstacles;
+    OBSTACLES_t** obstacles;
 
-    for (int i = 1; i <= rows; i++) { *size += i; }
+    for (int i = 1; i <= cfg.rows; i++) { *size += i; }
 
-    obstacles = malloc(*size * sizeof(int *));
+    obstacles = malloc( *size * sizeof(OBSTACLES_t *));
 
     for (int i = 0; i < *size; i++) 
     {
-        obstacles[i] = malloc(2 * sizeof(int));
+        obstacles[i] = malloc(2 * sizeof(OBSTACLES_t));
     }
 
-    for (int row = 1; row <= rows; ++row) 
+    for (int row = 1; row <= cfg.rows; ++row) 
     {
         int count = row;
         for (int i = 0; i < count; ++i) 
         {
-            int offset = (int)((i - (count - 1) / 2.0) * 2 * width );
-            obstacles[index][1] = center + offset;
-            obstacles[index][0] = row * height;
+            int offset = (int)((i - (count - 1) / 2.0) * 2 * cfg.width );
+            obstacles[index]->y = cfg.center + offset;
+            obstacles[index]->x = row * cfg.height;
             index++;
         }
     }
@@ -31,10 +31,10 @@ int** OBSTACLES_Init( int rows , int center , int width , int height , int* size
     return obstacles;
 }
 
-void OBSTACLES_Draw( int** obstacles , int size )
+void OBSTACLES_Draw( OBSTACLES_t** obstacles , int size )
 {
     for( int i = 0; i < size; i++ )
     {
-        D1306_DrawPixel( GET_POINTER( D1306 , OLED ) , obstacles[i][0] , obstacles[i][1] );
+        D1306_DrawPixel( GET_POINTER( D1306 , OLED ) , obstacles[i]->x , obstacles[i]->y );
     }
 }
