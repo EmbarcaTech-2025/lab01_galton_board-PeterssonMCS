@@ -30,6 +30,7 @@ void BINS_Draw(BINS_t** bins, int size)
 {
     for (int i = 0; i < size; i++)
     {
+        /*
         for (int x = bins[i]->x; x < bins[i]->x + bins[i]->height; ++x)
         {
             D1306_DrawPixel(GET_POINTER(D1306, OLED), x, bins[i]->y);
@@ -40,7 +41,7 @@ void BINS_Draw(BINS_t** bins, int size)
         {
             D1306_DrawPixel(GET_POINTER(D1306, OLED), bins[i]->x + bins[i]->height, y);
         }
-
+        */
         if( bins[i]->balls )
         {
             for ( int b = 0; b < bins[i]->balls ; b++ )

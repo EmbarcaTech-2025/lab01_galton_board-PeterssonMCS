@@ -2,11 +2,20 @@
 #include "pico/stdlib.h"
 #include "hal_def.h"
 #include "pOS.h"
-#include "application/ball.h"
+#include "application/ball_list.h"
 #include "application/obstacles.h"
 #include "application/bins.h"
 
-BALL_t* ball;
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
+
+#define BIN_HEIGHT 50
+#define STOP_HEIGHT ( SCREEN_WIDTH - BIN_HEIGHT )
+
+#define BALL_START 27
+
+BALL_LIST_t* ball_list;
+GPIO_t* button_a;
 
 int size_obstacles;
 OBSTACLES_t** obstacles;
@@ -24,16 +33,44 @@ void Update_Screen()
 
 void Move_Ball()
 {
-    BALL_Move( ball );
-    for (int i = 0; i < size_obstacles ; i++)
+    BALL_LIST_t** current_ptr = &ball_list;
+
+    while (*current_ptr != NULL) 
     {
-        BALL_CheckColision( ball , obstacles[i]->x , obstacles[i]->y );
+        BALL_LIST_t* current = *current_ptr;
+        BALL_t* ball = &current->ball;
+
+        BALL_Move(ball);
+
+        for (int i = 0; i < size_obstacles; i++) 
+        {
+            BALL_CheckColision(ball, obstacles[i]->x, obstacles[i]->y);
+        }
+
+        if (ball->x >= STOP_HEIGHT) 
+        {
+            BINS_AddBall(bins, size_bins, ball->y);
+            *current_ptr = current->next;
+            free(current);
+        } 
+        else 
+        {
+            current_ptr = &((*current_ptr)->next);
+        }
     }
-    if( ball->x >= 108 )
+}
+
+void Read_Button()
+{
+    if( !GPIO_GetInput( button_a ) )
     {
-        BINS_AddBall( bins , size_bins , ball->y );
-        ball->x = 0 ;
-        ball->y = 32;
+        BALL_t new_ball = {
+            .x = 0,
+            .y = BALL_START,
+            .vx = 1,
+            .vy = 1
+        };
+        BALL_LIST_Add( &ball_list , new_ball );
     }
 }
 
@@ -45,7 +82,12 @@ int main()
 
     int width = 1;
 
-    ball = BALL_Init( 0 , 32 , 1 , width );
+    GPIO_CONFIG_t gpio_cfg = {
+        .direction = 0,
+        .logic = 1,
+        .mode = 1,
+        .pin = 5
+    };
 
     OBSTACLES_CONFIG_t obstacles_cfg = {
         .rows = 31,
@@ -54,21 +96,25 @@ int main()
         .height = 2
     };
 
-    obstacles = OBSTACLES_Init( obstacles_cfg , &size_obstacles );
-
     BINS_CONFIG_t bins_cfg = { 
-        .x = 88 , 
+        .x = STOP_HEIGHT, 
         .width = width, 
-        .height = 40
+        .height = BIN_HEIGHT
     };
 
-    size_bins = 64/( bins_cfg.width ) + 1;
+    size_bins = SCREEN_HEIGHT/( bins_cfg.width ) + 1;
+
+    ball_list = BALL_LIST_Init();
 
     bins = BINS_Init( bins_cfg , size_bins );
 
-    OS_CreateTask( 200 , Update_Screen );
+    obstacles = OBSTACLES_Init( obstacles_cfg , &size_obstacles );
 
-    OS_CreateTask( 2 , Move_Ball );
+    button_a = GPIO_Init( gpio_cfg );
+    
+    OS_CreateTask( 200 , Update_Screen );
+    OS_CreateTask( 100 , Read_Button );
+    OS_CreateTask( 50 , Move_Ball );
 
     while (true)
     {

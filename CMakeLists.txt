@@ -45,7 +45,7 @@ add_executable( main
                 pOS.c
                 hal_def.c
                 application/ball.c
-                application/linked_list.c
+                application/ball_list.c
                 application/my_rand.c
                 application/obstacles.c
                 application/bins.c)
