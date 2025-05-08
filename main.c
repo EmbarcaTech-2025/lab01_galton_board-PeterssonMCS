@@ -12,7 +12,9 @@
 #define BIN_HEIGHT 50
 #define STOP_HEIGHT ( SCREEN_WIDTH - BIN_HEIGHT )
 
-#define BALL_START 27
+#define BALL_START 32
+#define HORIZONTAL_SPACING 1
+#define OBSTACLES_ROWS 31
 
 BALL_LIST_t* ball_list;
 GPIO_t* button_a;
@@ -35,21 +37,21 @@ void Move_Ball()
 {
     BALL_LIST_t** current_ptr = &ball_list;
 
-    while (*current_ptr != NULL) 
+    while(*current_ptr != NULL ) 
     {
         BALL_LIST_t* current = *current_ptr;
         BALL_t* ball = &current->ball;
 
         BALL_Move(ball);
 
-        for (int i = 0; i < size_obstacles; i++) 
+        for( int i = 0; i < size_obstacles; i++ ) 
         {
-            BALL_CheckColision(ball, obstacles[i]->x, obstacles[i]->y);
+            BALL_CheckColision( ball, obstacles[i]->x, obstacles[i]->y );
         }
 
-        if (ball->x >= STOP_HEIGHT) 
+        if( ball->x >= STOP_HEIGHT ) 
         {
-            BINS_AddBall(bins, size_bins, ball->y);
+            BINS_AddBall( bins, size_bins, ball->y );
             *current_ptr = current->next;
             free(current);
         } 
@@ -68,7 +70,7 @@ void Read_Button()
             .x = 0,
             .y = BALL_START,
             .vx = 1,
-            .vy = 1
+            .vy = HORIZONTAL_SPACING
         };
         BALL_LIST_Add( &ball_list , new_ball );
     }
@@ -80,8 +82,6 @@ int main()
 
     HAL_Init();
 
-    int width = 1;
-
     GPIO_CONFIG_t gpio_cfg = {
         .direction = 0,
         .logic = 1,
@@ -90,15 +90,16 @@ int main()
     };
 
     OBSTACLES_CONFIG_t obstacles_cfg = {
-        .rows = 31,
+        .rows = OBSTACLES_ROWS,
         .center = 32,
-        .width = width,
-        .height = 2
+        .width = HORIZONTAL_SPACING,
+        .height = 2,
+        .x_offset = 10
     };
 
     BINS_CONFIG_t bins_cfg = { 
         .x = STOP_HEIGHT, 
-        .width = width, 
+        .width = HORIZONTAL_SPACING, 
         .height = BIN_HEIGHT
     };
 
@@ -114,7 +115,7 @@ int main()
     
     OS_CreateTask( 200 , Update_Screen );
     OS_CreateTask( 100 , Read_Button );
-    OS_CreateTask( 50 , Move_Ball );
+    OS_CreateTask( 100 , Move_Ball );
 
     while (true)
     {

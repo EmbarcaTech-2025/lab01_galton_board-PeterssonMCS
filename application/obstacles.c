@@ -23,7 +23,7 @@ OBSTACLES_t** OBSTACLES_Init( OBSTACLES_CONFIG_t cfg , int* size )
         {
             int offset = (int)((i - (count - 1) / 2.0) * 2 * cfg.width );
             obstacles[index]->y = cfg.center + offset;
-            obstacles[index]->x = row * cfg.height;
+            obstacles[index]->x = row * cfg.height + cfg.x_offset;
             index++;
         }
     }

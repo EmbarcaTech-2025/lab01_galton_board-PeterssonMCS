@@ -6,7 +6,9 @@
 void BALL_CheckColision( BALL_t* ball , int x , int y )
 {
     if( ball->x == x && ball->y == y )
+    {
         ball->y += pseurand()*ball->vy;
+    }
 }
 
 void BALL_Move( BALL_t* ball )

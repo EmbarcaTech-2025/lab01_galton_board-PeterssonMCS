@@ -14,6 +14,7 @@ typedef struct
     int center;
     int width;
     int height;
+    int x_offset;
 }OBSTACLES_CONFIG_t;
 
 OBSTACLES_t** OBSTACLES_Init( OBSTACLES_CONFIG_t , int* );
