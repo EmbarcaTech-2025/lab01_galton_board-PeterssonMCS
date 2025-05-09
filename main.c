@@ -5,6 +5,7 @@
 #include "application/ball_list.h"
 #include "application/obstacles.h"
 #include "application/bins.h"
+#include "application/my_rand.h"
 
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
@@ -13,8 +14,29 @@
 #define STOP_HEIGHT ( SCREEN_WIDTH - BIN_HEIGHT )
 
 #define BALL_START 32
-#define HORIZONTAL_SPACING 5
-#define OBSTACLES_ROWS ( 32/HORIZONTAL_SPACING )
+#define HORIZONTAL_SPACING 1
+#define OBSTACLES_ROWS ( 32 / HORIZONTAL_SPACING )
+
+GPIO_CONFIG_t gpio_cfg = {
+    .direction = 0,
+    .logic = 1,
+    .mode = 1,
+    .pin = 5
+};
+
+OBSTACLES_CONFIG_t obstacles_cfg = {
+    .rows = OBSTACLES_ROWS,
+    .center = 32,
+    .width = HORIZONTAL_SPACING,
+    .height = 2,
+    .x_offset = 10
+};
+
+BINS_CONFIG_t bins_cfg = { 
+    .x = STOP_HEIGHT, 
+    .width = HORIZONTAL_SPACING, 
+    .height = BIN_HEIGHT
+};
 
 BALL_LIST_t* ball_list;
 GPIO_t* button_a;
@@ -35,6 +57,7 @@ void Update_Screen()
 
 void Move_Ball()
 {
+
     BALL_LIST_t** current_ptr = &ball_list;
 
     while(*current_ptr != NULL ) 
@@ -82,26 +105,7 @@ int main()
 
     HAL_Init();
 
-    GPIO_CONFIG_t gpio_cfg = {
-        .direction = 0,
-        .logic = 1,
-        .mode = 1,
-        .pin = 5
-    };
-
-    OBSTACLES_CONFIG_t obstacles_cfg = {
-        .rows = OBSTACLES_ROWS,
-        .center = 32,
-        .width = HORIZONTAL_SPACING,
-        .height = 2,
-        .x_offset = 10
-    };
-
-    BINS_CONFIG_t bins_cfg = { 
-        .x = STOP_HEIGHT, 
-        .width = HORIZONTAL_SPACING, 
-        .height = BIN_HEIGHT
-    };
+    init_rand( 0.5 );
 
     size_bins = SCREEN_HEIGHT/( bins_cfg.width ) + 1;
 

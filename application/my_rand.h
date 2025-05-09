@@ -7,6 +7,8 @@
 #define MODULUS 65537
 #define SEED 11152
 
+void init_rand( float percentage );
+
 int32_t pseurand();
 
 #endif
