@@ -30,14 +30,11 @@
 
 #define RESOURCES_LIST( MACRO ) \
     MACRO( TIMER )              \
-    MACRO( GPIO )               \
     MACRO( D1306 )              
 
 #define HAL_LIST( MACRO )       \
     MACRO( TIMER , OS )         \
-    MACRO( D1306 , OLED )       \
-    MACRO( GPIO, COOLER )       \
-    MACRO( GPIO, ALARM )        
+    MACRO( D1306 , OLED )       
 
 typedef enum
 {

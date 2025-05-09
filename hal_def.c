@@ -62,29 +62,3 @@ GEN_CFG( D1306 )
     }
     return success;
 }
-
-GEN_CFG( GPIO )
-{
-    bool success = false;
-    switch( id )
-    {
-        case GPIO_COOLER_ID:
-            cfg->pin = kPinList[COOLER_ID];
-            cfg->direction = 1;
-            cfg->logic = 1;
-            cfg->mode = 1;
-            success = true;
-        break;
-        case GPIO_ALARM_ID:
-            cfg->pin = kPinList[ALARM_ID];
-            cfg->direction = 0;
-            cfg->logic = 1;
-            cfg->mode = 1;
-            success = true;
-    break;
-        default:
-            success = false;
-        break;
-    }
-    return success;
-}
