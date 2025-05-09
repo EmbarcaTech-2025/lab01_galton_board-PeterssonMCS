@@ -28,6 +28,10 @@ This project simulates a **Galton Board** using the BitDogLab. A Galton Board de
 - Bin count tracking
 - Real-time visualization of ball distribution
 
+## Video
+
+https://www.youtube.com/shorts/Gi0iTMh8Ufw
+
 ## ⚙️ Configuration
 
 ```c
